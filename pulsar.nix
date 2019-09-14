@@ -11,24 +11,23 @@ stdenv.mkDerivation rec {
     sha512 = "a26181dcfab650a7a79dd0cb8147d18d5e2f173eca1d29c543ccec3b025be83f079989d5d9659897915e27eef7e26eded4f4001841c578f1032e0bd18ff6fb75"; 
   }; 
  
-  buildInputs = [ makeWrapper jre maven ]; 
+  buildInputs = [ makeWrapper jre bash ]; 
  
   installPhase = '' 
     # move all built items into out folder 
     # todo: need to identify which binaries are required by server 
     mkdir -p $out 
-    mkdir -p $out/logs 
     cp -R conf instances lib bin $out 
     
-    wrapProgram $out/bin/pulsar-admin-common.sh \ 
-      --set JAVA_HOME "${jre}" \ 
-      --set MAVEN_HOME "${maven}" \ 
-      --set PULSAR_HOME "$out"  
-        
+    for p in $out/bin\/* ; do
+      wrapProgram $p \ 
+        --set JAVA_HOME "${jre}" \ 
+        --set PULSAR_HOME "$out" \
+        --set PULSAR_LOG_DIR "/tmp/pulsar-log" \
+        --prefix PATH : "${bash}/bin"
+    done
+
     chmod +x $out/bin\/*  
-    chmod -R 777 $out/logs 
- 
-    #.$out/bin/pulsar-admin-common.sh 
   ''; 
  
   meta = with stdenv.lib; { 

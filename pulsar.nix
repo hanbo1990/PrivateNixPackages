@@ -18,15 +18,15 @@ stdenv.mkDerivation rec {
     # todo: need to identify which binaries are required by server 
     mkdir -p $out 
     cp -R conf instances lib bin $out 
-    
-    for p in $out/bin\/* ; do
-      wrapProgram $p \ 
-        --set JAVA_HOME "${jre}" \ 
-        --set PULSAR_HOME "$out" \
-        --set PULSAR_LOG_DIR "/tmp/pulsar-log" \
-        --prefix PATH : "${bash}/bin"
-    done
-
+   
+    # for p in $out/bin\/* ; do   # this does not work..  
+    wrapProgram $out/bin/pulsar \
+      --set JAVA_HOME "${jre}" \
+      --set PULSAR_LOG_DIR "/tmp/pulsar-logs" \
+      --prefix PATH : "${bash}/bin"
+    #done    
+ 
+   
     chmod +x $out/bin\/*  
   ''; 
  

@@ -17,8 +17,14 @@ stdenv.mkDerivation rec {
     # move all built items into out folder 
     # todo: need to identify which binaries are required by server 
     mkdir -p $out 
+    mkdir -p $out/data
     cp -R conf instances lib bin $out 
-   
+
+    sed -i 's/dataDir=data/dataDir=\/home\/bo\/log/g' $out/conf/global_zookeeper.conf
+    sed -i 's/dataDir=data/dataDir=\/home\/bo\/log/g' $out/conf/zookeeper.conf
+    sed -i 's/data\//\/home\/bo\/log\//g' $out/conf/bookkeeper.conf
+    sed -i 's/\# indexDirectories/indexDirectories/g' $out/conf/bookkeeper.conf
+
     # for p in $out/bin\/* ; do   # this does not work..  
     wrapProgram $out/bin/pulsar \
       --set JAVA_HOME "${jre}" \

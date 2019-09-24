@@ -17,7 +17,6 @@ stdenv.mkDerivation rec {
     # move all built items into out folder 
     # todo: need to identify which binaries are required by server 
     mkdir -p $out 
-    mkdir -p $out/data
     cp -R conf instances lib bin $out 
 
     sed -i 's/dataDir=data/dataDir=\/home\/bo\/log/g' $out/conf/global_zookeeper.conf
@@ -29,6 +28,7 @@ stdenv.mkDerivation rec {
     wrapProgram $out/bin/pulsar \
       --set JAVA_HOME "${jre}" \
       --set PULSAR_LOG_DIR "/tmp/pulsar-logs" \
+      --set PULSAR_PID_DIR "/tmp/pulsar-pid" \
       --prefix PATH : "${bash}/bin"
     #done    
  
